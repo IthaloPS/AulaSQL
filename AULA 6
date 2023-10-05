@@ -1,0 +1,43 @@
+create table tb_teste_tipo(
+valor_usado	varchar(10),
+res_bool	bool
+);
+
+insert into tb_teste_tipo 
+values
+('TRUE', TRUE),
+('1','1'),
+('t','t'),
+('no','no'),
+('f','f'),
+('Null', NULL),
+('FALSE',FALSE);
+
+select * from tb_teste_tipo;
+
+drop table tb_teste_tipo;
+
+create table tb_teste_tipo(
+char_simples	char,
+char_fixo	char(13),
+char_variavel	varchar(128)
+);
+
+insert into tb_teste_tipo 
+values
+('F','0-349-10177-9','A fabrica de string'),
+('S','1-85723-457-X','Excecao'),
+('F','0-349-10768-8','Particula'),
+(null,'','T.B.D');
+
+select * from tb_teste_tipo;
+
+insert into tb_teste_tipo 
+values
+('L','Um string muito longo','L');
+
+select char_fixo,
+	length(char_fixo),
+	char_variavel
+from tb_teste_tipo 
+where char_simples = 'S';
