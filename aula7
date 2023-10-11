@@ -1,0 +1,98 @@
+create table tb_teste_tipo(
+um_smallint smallint,
+um_int	int,
+um_float	float,
+um_real	real,
+um_numeric	numeric(5,2)
+);
+
+insert into tb_teste_tipo
+values
+(2,2,2.0,2.0,2.0),
+(-100,-100,123.456789,123.456789,123.456789),
+(-32768,-123456789,1.23456789,1.23456789,1.23456789),
+(-32768,-123456789,123456789.123456789,123456789.123456789,123.123456789);
+
+-- Erro SQL [22003]: ERROR: numeric field overflow
+-- Detalhe: A field with precision 5, scale 2 must round to an absolute value less than 10^3.
+
+insert into tb_teste_tipo 
+values
+(-32768,-123456789,123456789.123456789,23456789.123456789,123456789.123456789);
+
+select * from tb_teste_tipo ;
+
+create table tb_funcionario_2 (
+cod_referencia	char(5),
+dias_uteis	int[]
+);
+
+insert into tb_funcionario_2 
+values
+('val01', '{0,1,0,1,1,1,1}');
+
+insert into tb_funcionario_2 
+values
+('val02', '{0,1,1,1,1,0,1}');
+
+select * from tb_funcionario_2 ;
+
+select dias_uteis[2]
+from tb_funcionario_2 
+where cod_referencia = 'val02';
+
+drop table tb_funcionario_2 ;
+
+create table tb_funcionario_2(
+cod_referencia	char(5),
+dias_uteis	int array[7]
+);
+
+select cast (dt_entrega as char(10))
+from tb_pedido tp ;
+
+select preco_venda, cast (preco_venda as int) as "Guia de Preço"
+from tb_item 
+where preco_venda > 5.00;
+
+select ds_item,
+	substr(ds_item, 3,5),
+	preco_venda,
+	round(preco_venda,1)
+from tb_item;
+
+select trim('0' from '000Teste da Função TRIM000');
+
+select trim(' teste da Função TRIM ');
+
+select strpos('Teste da Função TRIM', 'e');
+
+select abs(-12345.67);
+
+select i.id_item,
+	i.ds_item,
+	e.quantidade,
+	current_timestamp 
+from tb_item i
+join tb_estoque e on(i.id_item = e.id_item);
+
+select current_user, current_time
+	from tb_cliente tc;
+	
+select oid, nome, sobrenome 
+from tb_cliente;
+
+create table tb_teste_oid(
+col_a	int,
+col_b	int
+)without oids;
+
+insert into tb_teste_oid 
+values
+(generate_series(1,100),
+generate_series(100,200));
+
+select col_a, col_b
+from tb_teste_oid;
+
+show all;
