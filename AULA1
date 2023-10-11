@@ -111,7 +111,7 @@ values
 (8, 'Escova de Dentes', 0.75, 1.45, 1),
 (9, 'Papel A4', 2.34, 2.45, 1),
 (10, 'Saco de Transporte', 0.01, 0.0, 1),
-(11, 'Alto-Falantes', 19.73, 25.32, 1)
+(11, 'Alto-Falantes', 19.73, 25.32, 1);
 
 insert into tb_pedido(id_pedido,id_cliente,dt_compra,dt_entrega,valor,fg_ativo)
 values
