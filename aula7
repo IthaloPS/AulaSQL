@@ -213,3 +213,51 @@ rename to tb_teste_restricoes_2;
 
 drop table tb_teste_restricoes_2;
 
+create temporary table tb_teste_restricoes(
+chave1	int,
+chave2	int,
+mystring	varchar(15),
+constraint cs1 check(mystring <> ''),
+constraint cs2 primary key(chave1, chave2)
+);
+
+select * from tb_teste_restricoes;
+
+create table tb_cidades(
+nome	text,
+populacao	float,
+altitude	int
+);
+
+create table tb_capitais(
+uf	char(2)
+) inherits(tb_cidades);
+
+select * from tb_capitais ;
+
+alter table tb_cidades 
+drop column nome;
+
+drop table tb_cidades cascade;
+
+--cai na prova diferenca entre o like e o inherits
+
+create table tb_cidades(
+nome	text,
+populacao	float,
+altitude	int
+);
+
+create table tb_capitais(
+uf	char(2),
+like tb_cidades
+);
+
+select * from tb_capitais;
+
+alter table tb_cidades 
+drop column altitude;
+
+select i.ds_item, e.quantidade
+from tb_item i 
+join tb_estoque e on(i.id_item = e.id_item);
