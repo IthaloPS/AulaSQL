@@ -1,0 +1,107 @@
+select i.ds_item, e.quantidade
+from tb_item i
+join tb_estoque e on (i.id_item = e.id_item);
+
+create view vs_status_estoque as
+select i.ds_item, e.quantidade
+from tb_item i
+join tb_estoque e on(i.id_item = e.id_item);
+
+select * 
+from vs_status_estoque;
+
+drop view vs_status_estoque ;
+
+create table tb_teste_view(
+col_a	serial,
+col_b	varchar(10),
+col_c	varchar(10),
+fg_ativo	boolean,
+primary key(col_a)
+);
+
+insert into tb_teste_view (col_b, col_c, fg_ativo)
+values
+('Desc1','Desc1',TRUE),
+('Desc2','Desc2',TRUE),
+('Desc3','Desc3',TRUE);
+
+create view vw_teste as 
+select * 
+from tb_teste_view ;
+
+select *
+from vw_teste;
+
+alter table tb_teste_view 
+add column col_d varchar(10);
+
+select * 
+from vw_teste;
+
+create or replace view vw_teste as
+select *
+from tb_teste_view ;
+
+select *
+from vw_teste;
+
+create table "Tb_Cliente_Teste"
+as 
+select *
+from tb_cliente;
+
+select *
+from "Tb_Cliente_Teste" ;
+
+select quote_ident('Tb_Cliente_Teste');
+
+create table tb_dados_duplicados(
+id_cliente	int,
+nm_cliente	varchar,
+sobrenome	varchar,
+idade	int
+);
+
+insert into tb_dados_duplicados 
+values
+(1,'Philip','Marlowe',38),
+(2,'Richard','Hannay',42),
+(3,'Holly','Martins',25),
+(4,'Harry','Palmer',36),
+(4,'Mark','Hall',47);
+
+select *
+from tb_dados_duplicados;
+
+select *
+from tb_dados_duplicados 
+where id_cliente in(select id_cliente
+					from tb_dados_duplicados
+					group by id_cliente
+					having count(*) > 1);
+					
+delete 
+from tb_dados_duplicados 
+where id_cliente = 4 and sobrenome ='Hall';
+
+create table tb_novo_cliente
+as
+select id_cliente
+from tb_dados_duplicados ;
+
+insert into tb_novo_cliente 
+values(4);
+
+delete from tb_novo_cliente
+
+begin;
+	lock table tb_novo_cliente in row exclusive mode;
+	delete from tb_novo_cliente 
+	where ctid not in(select min(ctid)
+				  	  from tb_novo_cliente 
+				  	  where id_cliente in(1,2,3,4)
+				  	  group by id_cliente);
+commit;
+
+select * from tb_novo_cliente ;
