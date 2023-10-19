@@ -105,3 +105,99 @@ begin;
 commit;
 
 select * from tb_novo_cliente ;
+
+alter table tb_novo_cliente 
+add constraint pk_tb_novo_cliente_id_cliente
+	primary key(id_cliente);
+	
+alter table tb_novo_cliente 
+add unique(id_cliente);
+
+create unique index on tb_novo_cliente(id_cliente);
+
+select *
+from generate_series(1,5);
+
+select date(generate_series(now(),
+			now()+'1 week',
+			'1 day'
+));
+
+select (random()* (2*10^9))::integer;
+
+select(random()*100.)::numeric(4,2);
+
+select repeat('1',(random()*40)::integer);
+
+select substr('abcdefghijklmnopqrstuvwxyz',1,
+			  (random()*26)::integer);
+
+select (array['um','dois','tres'])[1+random()*3];
+
+select generate_series(1,10) as chave,
+	(random()* 100.)::numeric(4,2),
+	repeat('1',(random()*25)::integer);
+	
+select generate_series(1,10) as chave,
+	(random()* 100.)::numeric(4,2),
+	repeat('1',(random()*25)::integer)
+order by random()*3;
+
+create table tb_exemplo
+as 
+select *
+from tb_cliente 
+where id_cliente is null;
+
+select *
+from tb_cliente;
+
+copy tb_exemplo
+from 'C:/temp/tb_cliente_202310182125.csv'
+	using delimiters ','
+	csv header;
+	
+select *
+from tb_exemplo ;
+
+create table tb_xml(
+id	serial,
+documento_xml	xml,
+constraint pk_xml_id primary key(id));
+
+insert into tb_xml(documento_xml)
+select xmlforest(nome, endereco, cidade)
+from tb_cliente ;
+
+select * from tb_xml;
+
+copy (select documento_xml
+	  from tb_xml)
+to'c:/temp/xml_teste.xml';
+
+create table tb_produtos(
+id_produto	int not null primary key,
+produto_codigo	varchar(20),
+produto_nome	varchar(60),
+produto_valor	real,
+produto_situacao	varchar(1) default'A',
+data_criacao	timestamp,
+data_atuacao	timestamp
+);
+
+alter table tb_produtos 
+add column produto_categoria text[];
+
+alter table tb_produtos 
+add column produto_estoque json;
+
+insert into tb_produtos
+values
+(99,'6234','COCA-COLA',6,'A','01/01/2023','01/01/2023',
+'{"REFRIGERANTE","LATA","BEBIDA","COLA"}',
+'{"info_estoque":
+	{"tem_estoque":"SIM",
+	 "quantidade":17,
+	 "ultima_compra":"01/01/23"
+}'
+);
