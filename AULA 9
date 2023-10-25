@@ -1,0 +1,78 @@
+ COPY(select *
+from tb_cliente tc)
+to 'c:/temp/teste2.csv'
+with
+delimiter as ';'
+;
+
+
+copy(select *
+from tb_cliente tc 
+)
+to 'c:/temp/teste.csv'
+with
+csv
+quote as ';';
+
+copy(select *
+from tb_cliente tc 
+)
+to 'c:/temp/cliente_18_10_23.txt'
+with
+delimiter as ';';
+
+create or replace function fn_tx_venda(real)
+returns real AS 
+$$
+declare 
+v_subtotal alias for $1;
+begin 
+	return v_subtotal * 0.06;
+end
+$$
+language plpgsql;
+
+select fn_tx_venda(9.87);
+
+create or replace function fn_tx_venda(p_subtotal real)
+returns real as 
+$$
+begin 
+	return p_subtotal * 0.06;
+end
+$$
+language plpgsql;
+
+select fn_tx_venda(12);
+
+create or replace function fn_variaveis(integer, varchar)
+returns varchar as 
+$$
+begin
+	return 'Variaveis de retorno:' ||$1||$2;
+end
+$$
+language plpgsql;
+
+
+select fn_variaveis(1,'-LBD');
+
+select fn_variaveis(1,'-LBD') "Retorno da Função";
+
+
+create or replace function fn_tipo_coluna(int)
+returns varchar as 
+$$
+declare 
+v_nome tb_cliente.nome%type;
+begin
+	select nome into v_nome
+	from tb_cliente
+	where id_cliente = $1;
+
+return "Nome do cliente:" || v_nome;
+end
+$$
+language plpgsql;
+
+select fn_tipo_coluna(10);
