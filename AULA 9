@@ -1,4 +1,4 @@
- COPY(select *
+COPY(select *
 from tb_cliente tc)
 to 'c:/temp/teste2.csv'
 with
@@ -70,9 +70,25 @@ begin
 	from tb_cliente
 	where id_cliente = $1;
 
-return "Nome do cliente:" || v_nome;
+return 'Nome do cliente:' || v_nome;
 end
 $$
 language plpgsql;
 
 select fn_tipo_coluna(10);
+
+create or replace function fn_tipo_tupla(int)
+returns varchar as 
+$$
+declare 
+v_tupla tb_cliente%ROWTYPE;
+begin
+	select * into v_tupla 
+	from tb_cliente
+	where id_cliente= $1;
+return 'Tupla (linha):'||v_tupla;
+end
+$$
+language plpgsql;
+
+select fn_tipo_tupla(10);
