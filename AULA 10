@@ -1,0 +1,129 @@
+
+create or replace function fn_maior_25()
+	returns setof tb_clientes as 
+'
+	select * 
+	from tb_clientes
+	where date_part(''YEAR'', AGE(dt_nascimento))>25;
+'
+	language sql;
+
+
+select codigo,
+	nm_cliente,
+	cidade,
+	date_part('YEAR', AGE(dt_nascimento))
+from fn_maior_25();
+
+
+create or replace function fn_get_clientes(int)
+	returns varchar as 
+	'
+	select nm_cliente
+	from tb_clientes
+	where codigo = $1;
+	'
+	language sql;
+
+
+create or replace function fn_get_produtos(int)
+	returns varchar as 
+	'
+	select ds_produto
+	from tb_produtos
+	where codigo = $1;
+	'
+	language sql;
+
+
+select ref_clientes,
+	fn_get_clientes(ref_clientes),
+	quantidade,
+	preco,
+	ref_produtos,
+	fn_get_produtos(ref_produtos)
+from tb_compras;
+
+create table tb_empregados(
+nome varchar not null,
+salario numeric);
+
+
+create table tb_empregados_auditoria(
+operacao char not null,
+usuario varchar not null,
+dt_hr timestamp not null,
+nome varchar not null,
+salario numeric
+);
+
+create or replace function fn_empregado_auditoria()
+	returns trigger as 
+	$$
+	begin 
+		if(tg_op = 'DELETE')then
+		insert into tb_empregados_auditoria
+			select 'E', user, now(),old.*;
+		return old;
+	
+elsif(tg_op = 'UPDATE')then
+	insert into tb_empregados_auditoria
+		select 'A', user, now(), new.*;
+	return new;
+
+elsif(tg_op = 'INSERT') then
+	insert into tb_empregados_auditoria
+		select 'I', user, now(), new.*;
+	return new;
+end if;
+
+	return null;
+end;
+$$
+language plpgsql;
+
+create trigger tg_empregado_auditoria
+after insert or update or delete on tb_empregados
+for each row execute procedure fn_empregado_auditoria();
+
+insert into tb_empregados(nome, salario)
+values
+('João', 1500.98),
+('Pedro', 3452.76),
+('Marta', 3745.65);
+
+update tb_empregados 
+	set salario = 2500.55
+where nome = 'Marta';
+
+delete from tb_empregados 
+where nome ='João';
+
+select * from tb_empregados_auditoria ;
+
+create or replace function fn_get_func(p_id int)
+returns varchar
+as 
+$$
+declare 
+	v_nome varchar(30);
+	v_salario numeric(7,2);
+	v_cargo varchar(50);
+begin 
+	select nm_funcionario, salario, cargo
+	into v_nome, v_salario, v_cargo
+	from tb_funcionario
+	where id_funcionario = p.id;
+	
+	if(v_nome is not null) then
+	return 'Nome: ' || v_nome ||
+			'Salario: ' || v_salario ||
+			'Cargo: ' || v_cargo;
+	
+	else 
+		return 'O ID: ' || p_id || ' Não existe!';
+	end if;
+end;
+$$
+language plpgsql;
+
