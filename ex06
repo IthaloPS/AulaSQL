@@ -1,3 +1,7 @@
+create database "EXERCICIO_06"
+template = template0
+connection limit 100;
+
 create table tb_funcionario(
 id_funcionario	int,
 nome	varchar(60),
