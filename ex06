@@ -249,3 +249,32 @@ select fn_manipula_funcionario(7782, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '
 select fn_manipula_funcionario(9999, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'D'); -- nao existe tupla com id 9999
 
 select * from tb_funcionario tf ;
+
+create or replace function fn_maior_menor(f_numero1 int, f_numero2 int, f_numero3 int)
+    returns varchar as
+$$
+declare
+    maior int;
+    menor int;
+begin
+    if f_numero1 >= f_numero2 and f_numero1 >= f_numero3 then
+        maior = f_numero1;
+    elsif f_numero2 >= f_numero1 and f_numero2 >= f_numero3 then
+        maior = f_numero2;
+    else
+        maior = f_numero3;
+    end if;
+
+    if f_numero1 <= f_numero2 and f_numero1 <= f_numero3 then
+        menor = f_numero1;
+    elsif f_numero2 <= f_numero1 and f_numero2 <= f_numero3 then
+        menor = f_numero2;
+    else
+        menor = f_numero3;
+    end if;
+
+    return 'O maior valor eh:'  maior  ' e o menor eh: ' || menor;
+end;
+$$
+    language plpgsql;
+SELECT fn_maior_menor(-3, -1, 0);
