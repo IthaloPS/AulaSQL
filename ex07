@@ -1,0 +1,73 @@
+
+create or replace function fn_calcula_diaria(p_id_funcionario tb_funcionario.id_funcionario%type, p_dias_trabalhados int)
+returns varchar as
+$$
+declare
+    v_nome_funcionario tb_funcionario.nome%type;
+    v_salario_funcionario tb_funcionario.salario%type;
+begin
+    select nome, salario into v_nome_funcionario, v_salario_funcionario from tb_funcionario 
+    where id_funcionario = p_id_funcionario;
+
+    if v_nome_funcionario is null then
+        return 'O funcionário não existe!';
+    else
+        return 'O empregado ' || v_nome_funcionario || ' recebe R$' || (v_salario_funcionario / p_dias_trabalhados) || ' por dia de trabalho';
+    end if;
+end;
+$$
+language plpgsql;
+
+select * from tb_funcionario tf 
+
+select fn_calcula_diaria(7654, 21);
+
+create or replace function fn_nome_cargo(p_id_funcionario tb_funcionario.id_funcionario%type)
+
+	returns varchar as 
+$$
+declare
+	v_nome tb_funcionario.nome%type;
+	v_cargo tb_funcionario.cargo%type;
+begin
+	select nome, cargo into v_nome, v_cargo from tb_funcionario
+	where id_funcionario = p_id_funcionario;
+
+	if(v_nome is null) then
+		return 'O funcionário não existe!';
+	else
+		return 'O funcionario ' || p_id_funcionario || ' - ' || upper(v_nome) || ' exerce o cargo de ' || upper(v_cargo);
+	end if;
+end;
+$$
+
+language plpgsql;
+
+select fn_nome_cargo(7839);
+
+create or replace function fn_gerente(p_id_funcionario tb_funcionario.id_funcionario%type)
+
+	returns varchar as 
+$$
+declare
+	v_nome tb_funcionario.nome%type;
+	v_nm_gerente tb_funcionario.cargo%type;
+begin
+	select f.nome, coalesce(g.nome, ' os acionistas ')
+	into v_nome, v_nm_gerente
+	from tb_funcionario f
+		left join tb_funcionario g on f.id_gerente = g.id_funcionario 
+	where f.id_funcionario = p_id_funcionario;
+	if(v_nome is null) then
+		return 'O funcionário não existe!';
+	else
+		return 'O funcionario ' || v_nome || ' trabalha para ' || v_nm_gerente;
+	end if;
+end;
+$$
+
+language plpgsql;
+
+select fn_gerente(7698);
+select fn_gerente(7839);
+select fn_gerente(99);
